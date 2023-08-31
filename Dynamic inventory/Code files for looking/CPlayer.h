@@ -52,7 +52,6 @@ public:
 
 	void	Update			( const tgFloat DeltaTime );
 	void	HandleCollision	( const tgFloat DeltaTime );
-	void	HandleAnimation	( const tgFloat DeltaTime );
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -81,10 +80,6 @@ private:
 //////////////////////////////////////////////////////////////////////////
 
 	tgCModel* m_pModel;
-	tgCAnimation*		m_Animations[ EState::NUM_STATES ];
-	tgCInterpolator*	m_pInterpolatorCurrent;
-	tgCInterpolator*	m_pInterpolatorBlend;
-	tgCInterpolator*	m_pInterpolatorNext;
 
 	tgCV3D				m_MovementDirection;
 	tgCV3D				m_CameraRotation;

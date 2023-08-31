@@ -40,9 +40,6 @@ CPlayer::CPlayer( void )
 : m_pModel( NULL )
 //, m_Animations
 , m_pInventory(NULL)
-, m_pInterpolatorCurrent(NULL)
-, m_pInterpolatorBlend(NULL)
-, m_pInterpolatorNext( NULL )
 , m_MovementDirection( tgCV3D::Zero )
 , m_RowLenght(5)
 , m_CameraRotation( 45.0f, 180.0f, 0.0f )
@@ -72,28 +69,18 @@ CPlayer::CPlayer( void )
 	// Load model
 	tgCCamera& r3DCamera = *CApplication::GetInstance().Get3DCamera()->GetCamera();
 	tgCMatrix& rCameraMatrix = r3DCamera.GetTransform().GetMatrixLocal();
-	m_pModel		= CModelManager::GetInstance().LoadModel( "models/box", "Player", true );
+
+	m_pModel		= CModelManager::GetInstance().LoadModel( "models/box", "Player", false );
+
 	tgCV3D modelp = r3DCamera.GetTransform().GetMatrixLocal().Pos;
 	modelp.y -= 0.1;
 	modelp.x -= 0.1;
 	modelp.z += 0.7;
+
 	m_pModel->GetTransform().GetMatrixLocal().Scale(tgCV3D::Zero, tgCMatrix::COMBINE_POST_MULTIPLY);
 	m_pModel->GetTransform().GetMatrixLocal().Pos = modelp;
+
 	r3DCamera.GetTransform().AddChild(m_pModel->GetTransform());
-	// Load animations
-	m_Animations[ STATE_IDLE ]		= tgCAnimationManager::GetInstance().Create( "animations/orc_idle" );
-	m_Animations[ STATE_WALK ]		= tgCAnimationManager::GetInstance().Create( "animations/orc_walk" );
-	m_Animations[ STATE_RUN ]		= tgCAnimationManager::GetInstance().Create( "animations/orc_run" );
-	m_Animations[ STATE_ATTACK_1 ]	= tgCAnimationManager::GetInstance().Create( "animations/orc_attack" );
-	m_Animations[ STATE_ATTACK_2 ]	= tgCAnimationManager::GetInstance().Create( "animations/orc_long_attack" );
-	m_Animations[ STATE_HURT_1 ]	= tgCAnimationManager::GetInstance().Create( "animations/orc_hit" );
-	m_Animations[ STATE_HURT_2 ]	= tgCAnimationManager::GetInstance().Create( "animations/orc_fall" );
-
-	// Create interpolators
-	m_pInterpolatorCurrent			= new tgCInterpolator( *m_Animations[ STATE_IDLE ] );
-	m_pInterpolatorBlend			= new tgCInterpolator( *m_Animations[ STATE_IDLE ] );
-	m_pInterpolatorNext				= new tgCInterpolator( *m_Animations[ STATE_IDLE ] );
-
 	tgInput::AddListener( this );
 	m_pInventory = new CInventory(this);
 
@@ -109,17 +96,6 @@ CPlayer::~CPlayer( void )
 {
 	tgInput::RemoveListener( this );
 
-	// Destroy interpolators
-	delete m_pInterpolatorCurrent;
-	delete m_pInterpolatorBlend;
-	delete m_pInterpolatorNext;
-
-	// Destroy animations
-	for( tgCAnimation* pAnimation : m_Animations )
-	{
-		if( pAnimation )
-			tgCAnimationManager::GetInstance().Destroy( &pAnimation );
-	}
 	CInventory* Tempinv = m_pInventory;
 	delete m_pInventory; //= nullptr;
 	//delete Tempinv;
@@ -247,10 +223,10 @@ CPlayer::Update( const tgFloat DeltaTime )
 //////////////////////////////////////////////////////////////////////////
 
 	m_pInventory->Update(DeltaTime);
-	//m_pModel->GetTransform().GetMatrixLocal().Scale( 0.01f, tgCMatrix::COMBINE_REPLACE );
-	//m_pModel->GetTransform().GetMatrixLocal().RotateXYZTranslate(m_CameraRotation,m_Position, tgCMatrix::COMBINE_REPLACE);
-	//m_pModel->GetTransform().GetMatrixLocal().RotateXYZ(m_CameraRotation, tgCMatrix::COMBINE_POST_MULTIPLY);
-	//m_pModel->GetTransform().Update();
+	m_pModel->GetTransform().GetMatrixLocal().Scale( 0.01f, tgCMatrix::COMBINE_REPLACE );
+	m_pModel->GetTransform().GetMatrixLocal().RotateXYZTranslate(m_CameraRotation,m_Position, tgCMatrix::COMBINE_REPLACE);
+	m_pModel->GetTransform().GetMatrixLocal().RotateXYZ(m_CameraRotation, tgCMatrix::COMBINE_POST_MULTIPLY);
+	m_pModel->GetTransform().Update();
 }	// */ // Update
 
 
@@ -295,56 +271,6 @@ CPlayer::HandleCollision( const tgFloat DeltaTime )
 	}
 
 }	// */ // HandleCollision
-
-
-////////////////////////////// HandleAnimation //////////////////////////////
-//                                                                         //
-//  Info:
-//                                                                         //
-//*//////////////////////////////////////////////////////////////////////////
-void
-CPlayer::HandleAnimation( const tgFloat DeltaTime )
-{
-	if( m_LastState != m_State )
-	{
-		if( m_IsBlending )
-		{
-			m_Blend = m_pInterpolatorCurrent->GetTime();
-			m_pInterpolatorCurrent->SetAnimation( *m_pInterpolatorNext->GetAnimation() );
-			m_pInterpolatorCurrent->SetTime( m_pInterpolatorNext->GetTime() );
-		}
-
-		m_pInterpolatorNext->SetAnimation( *m_Animations[ m_State ] );
-		m_IsBlending	= true;
-		m_LastState		= m_State;
-	}
-
-	if( m_IsBlending )
-	{
-		m_pInterpolatorBlend->Blend( *m_pInterpolatorCurrent, *m_pInterpolatorNext, m_Blend, true );
-		m_pModel->SetAnimationMatrices( *m_pInterpolatorBlend );
-		m_Blend		+= DeltaTime * 3;
-
-		if( m_Blend > 1 )
-		{
-			m_IsBlending	= false;
-			m_Blend			= 0;
-			m_pInterpolatorCurrent->SetAnimation( *m_pInterpolatorNext->GetAnimation() );
-			m_pInterpolatorCurrent->SetTime( m_pInterpolatorNext->GetTime() );
-		}
-	}
-	else
-	{
-		m_pModel->SetAnimationMatrices( *m_pInterpolatorCurrent );
-	}
-
-	m_pInterpolatorCurrent->AddTime( DeltaTime, true, true );
-	m_pInterpolatorNext->AddTime( DeltaTime, true, true );
-
-	m_pModel->Update();
-
-}	// */ // HandleAnimation
-
 
 ////////////////////////////// InputEvent //////////////////////////////
 //                                                                    //
