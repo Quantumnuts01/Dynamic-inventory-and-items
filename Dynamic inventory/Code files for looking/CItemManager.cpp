@@ -25,13 +25,6 @@ CItemManager::~CItemManager(void)
 	}
 }
 
-void CItemManager::CreateItemInWorld( tgSInt32 ItemID, tgCV3D Position)
-{
-	CBaseItem* Temp = CItemLibrary::GetInstance().CreateItem( ItemID );
-	Temp->SpawnItemModel(Position);
-	m_pItemsInWorld.insert({Temp->GetItemName(), Temp});
-
-}
 
 void CItemManager::AddItemToWorld(CBaseItem* Item, tgCV3D Position)
 {
@@ -75,7 +68,7 @@ CBaseItem* CItemManager::LineItemsInWorld( tgCLine3D Line, tgCCollision* pItemCo
 	return nullptr;
 }
 
-void CItemManager::UpdateItemsInWorld( tgFloat DeltaTime )
+void CItemManager::UpdateItemsInWorld( tgFloat /*DeltaTime*/ )
 {
 	
 }

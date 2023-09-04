@@ -9,7 +9,7 @@ CDebugCube::~CDebugCube()
 {
 }
 
-tgBool CDebugCube::UseItem()
+tgBool CDebugCube::UseItem(CPlayer* Owner)
 {
 	return tgBool();
 }

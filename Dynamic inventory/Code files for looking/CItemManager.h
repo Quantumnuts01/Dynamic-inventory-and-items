@@ -15,8 +15,8 @@ public:
 	~CItemManager( void );
 
 //////////////////////////////////////////////////////////////////////////
-
-	void CreateItemInWorld( tgSInt32 ItemID, tgCV3D Position);
+	template<typename T>
+	void CreateItemInWorld(tgCV3D Position);
 
 	void AddItemToWorld( CBaseItem* Item, tgCV3D Position );
 
@@ -36,3 +36,12 @@ private:
 	std::map <tgCString, CBaseItem*> m_pItemsInWorld;
 
 };
+
+template<typename T>
+void CItemManager::CreateItemInWorld(tgCV3D Position)
+{
+	T* Temp = CItemLibrary::GetInstance().CreateItem<T>();
+	Temp->SpawnItemModel(Position);
+	m_pItemsInWorld.insert({ Temp->GetItemName(), Temp });
+
+}

@@ -7,7 +7,7 @@ class CGun :
 public:
     CGun(tgSInt32 ItemID, SItemData ItemData);
     ~CGun();
-    virtual tgBool UseItem() override;
+    virtual tgBool UseItem(CPlayer* Owner) override;
     virtual void	ItemSelected(CPlayer* Owner) override;
 
     virtual void Update(const tgFloat Deltatime) override;

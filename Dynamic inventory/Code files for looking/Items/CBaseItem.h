@@ -16,7 +16,7 @@ class CBaseItemComponent;
 
 struct SItemData
 {
-
+	tgSInt32	_ItemID;
 	tgCString	_IconPath;
 	tgSInt32	_MaxStackSize;
 	tgCString	_ModelPath;
@@ -35,12 +35,13 @@ public:
 
 	//////////////////////////////////////////////////////////////////////////
 
-	virtual tgBool	UseItem() = 0;
+	virtual void	Update(const tgFloat Deltatime);
+	virtual tgBool	UseItem(CPlayer* Owner) = 0;
 
 	//////////////////////////////////////////////////////////////////////////
-
-	virtual void	Update(const tgFloat Deltatime);
+	
 	virtual void	ItemSelected(CPlayer* Owner);
+	
 
 	//////////////////////////////////////////////////////////////////////////
 
@@ -63,10 +64,10 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 protected:
 
-	tgSInt32		m_ID;
-	SItemData		m_Data;
-	tgCString		m_ItemName;
-	tgCModel*		m_pItemModel;
-
+	tgSInt32							m_ID;
+	SItemData							m_Data;
+	tgCString							m_ItemName;
+	tgCModel*							m_pItemModel;
+	std::vector<CBaseItemComponent*>	m_pComponents;
 };
 

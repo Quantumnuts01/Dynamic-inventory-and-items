@@ -6,7 +6,7 @@
 #include <tgCMatrix.h>
 #include <CApplication.h>
 #include <Camera/CCamera.h>
-#include <tgCModelManager.h>
+#include <tgCModel.h>
 
 CGun::CGun(tgSInt32 ItemID, SItemData ItemData) : CBaseItem(ItemID, ItemData)
 {
@@ -25,7 +25,7 @@ void CGun::Shoot()
 {
 	CBulletManager::GetInstance().NewBullet(new  SBullet{ m_pItemModel->GetTransform().GetMatrixWorld().At, 5, 3,tgCSphere(m_pItemModel->GetTransform().GetMatrixWorld().Pos, 0.3) });
 }
-tgBool CGun::UseItem()
+tgBool CGun::UseItem(CPlayer* Owner)
 {
 	Shoot();
 	return true;

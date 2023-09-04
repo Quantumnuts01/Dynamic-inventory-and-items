@@ -12,6 +12,9 @@
 #include	<tgCQuadManager.h>
 #include	<tgCTextureManager.h>
 #include	<tgCDebugManager.h>
+#include <Specialization/Items/CDebugCube.h>
+#include <Specialization/Items/CHelmet.h>
+#include <Specialization/Items/CGun.h>
 
 
 ////////////////////////////// CLevel //////////////////////////////
@@ -73,9 +76,14 @@ tgBool CInventorySlot::AddItem(tgSInt32 ItemID, tgSInt32 ItemAmount)
 		UpdateItemDesc();
 		return true;
 	}
-	else if(!m_pCurrentItemStack)
+	else if(ItemID)
 	{
-		m_pCurrentItemStack = m_pLib->CreateItem(ItemID);
+		if (ItemID == 1)
+			m_pCurrentItemStack = m_pLib->CreateItem<CDebugCube>();
+		if (ItemID == 2)
+			m_pCurrentItemStack = m_pLib->CreateItem<CHelmet>();
+		if (ItemID == 3)
+			m_pCurrentItemStack = m_pLib->CreateItem<CGun>();
 		m_pCurrentItemStack->GetItemData()._StackSize = ItemAmount;
 		UpdateItemDesc();
 		return true;
@@ -110,6 +118,16 @@ tgBool CInventorySlot::DrawImGuiButton( void )
 	
 	return false;
 
+}
+
+void CInventorySlot::ClearItem()
+{
+	if (m_pCurrentItemStack)
+	{
+		delete m_pCurrentItemStack;
+		m_pCurrentItemStack = nullptr;
+		UpdateItemDesc();
+	}
 }
 
 CBaseItem* CInventorySlot::GetItemStack(void)

@@ -18,12 +18,20 @@ CBaseItem::CBaseItem(tgSInt32 ID, SItemData Data):
 CBaseItem::~CBaseItem(void)
 {
 	CModelManager::GetInstance().DestroyModel(m_ItemName);
+	for (size_t i = 0; i < m_pComponents.size(); i++)
+	{
+		delete m_pComponents[i];
+	}
 }
 
 
 
 void CBaseItem::Update(const tgFloat Deltatime)
 {
+	for (size_t i = 0; i < m_pComponents.size(); i++)
+	{
+		m_pComponents[i]->Update(Deltatime);
+	}
 }
 
 void CBaseItem::SetItemPosition(tgCV3D Position)
@@ -57,4 +65,6 @@ void CBaseItem::DespawnItemModel()
 void CBaseItem::ItemSelected(CPlayer* Owner)
 {
 }
+
+
 

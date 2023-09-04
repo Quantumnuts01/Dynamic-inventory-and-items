@@ -16,6 +16,7 @@
 #include	<tgCQuadManager.h>
 #include	<tgCDebugManager.h>
 #include	<tgCCore.h>
+#include <Specialization/Items/CHelmet.h>
 
 
 CInventory::CInventory( CPlayer* owner )
@@ -144,6 +145,14 @@ void CInventory::CreateInventory()
 	m_pSelectedInventorySlot->GetQuad()->GetMaterial().SetColor(tgCColor::Silver);
 }
 
+void CInventory::ClearInventoryItems()
+{
+	for (size_t i = 0; i < m_InventorySlots.size(); i++)
+	{
+		m_InventorySlots[i]->ClearItem();
+	}
+}
+
 void CInventory::ClearInventory()
 {
 	tgCQuadManager::GetInstance().Destroy(&m_pInventoryQuad);
@@ -185,6 +194,7 @@ void CInventory::DrawImGUI( void )
 {
 	if (this)
 	{
+		//Here Is the logic for adding items to the inventory from ImGui
 		if (ImGui::Button(tgCString("Add Item 1 to Slot: %i", m_SelectedSlotID).String(), {150,50}))
 		{
 			m_InventorySlots[m_SelectedSlotID]->AddItem(1, 1);
@@ -201,8 +211,9 @@ void CInventory::DrawImGUI( void )
 		ImGui::SameLine();
 		if (ImGui::Button(tgCString("clear inventory %i", m_SelectedSlotID).String(), { 150,50 }))
 		{
-			ClearInventory();
+			ClearInventoryItems();
 		}
+		//here the settings for changing the rowlenght and height of the inventory quads are set with ImGui
 		if (ImGui::Button(tgCString("Add Itemslot", m_SelectedSlotID).String(), { 150,50 }))
 		{
 			m_AmountOfSlots++;
@@ -231,6 +242,7 @@ void CInventory::DrawImGUI( void )
 		}
 		tgCString ID = tgCString("%i", m_SelectedSlotID);
 		ImGui::Text(tgCString("Selected Itemslot ID: %s",ID ).String());
+		
 		if (m_SelectedSlotID >= 0 && m_SelectedSlotID < m_InventorySlots.size())
 		{
 			{
@@ -297,7 +309,7 @@ void CInventory::DropItem(tgSInt32 SlotID)
 		Position.y += 0.1;
 		if (m_InventorySlots[SlotID]->GetItemStack()->GetItemData()._StackSize > 1 && !m_DropAll)
 		{
-			CItemManager::GetInstance().CreateItemInWorld(m_InventorySlots[SlotID]->GetItemStack()->GetItemID(), Position);
+			//CItemManager::GetInstance().CreateItemInWorld<decltype(m_InventorySlots[SlotID]->GetItemStack())>(Position);
 			m_InventorySlots[SlotID]->GetItemStack()->GetItemData()._StackSize -= 1;
 		}
 		else
@@ -534,7 +546,7 @@ void CInventory::InputEvent(const tgInput::EType Type, const tgInput::SEvent* pE
 				//if it is equipped it shoots
 				if (m_InventorySlots[m_SelectedSlotID]->GetItemStack() && m_ItemEquipped)
 				{
-					m_InventorySlots[m_SelectedSlotID]->GetItemStack()->UseItem();
+					m_InventorySlots[m_SelectedSlotID]->GetItemStack()->UseItem(m_pPlayer);
 				}
 			}
 			if (pEvent->Mouse.ButtonId == 2 && m_InventoryVisible)

@@ -30,6 +30,7 @@ public:
 	void					Update(const tgFloat DeltaTime);
 	tgBool					AddItem(tgSInt32 ItemID, tgSInt32 ItemAmount);
 	tgBool					DrawImGuiButton( void );
+	void					ClearItem();
 
 	CBaseItem*				GetItemStack(void);
 	tgCQuad*				GetQuad(void) { return m_pSlotQuad; }

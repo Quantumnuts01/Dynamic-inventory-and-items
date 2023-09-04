@@ -16,6 +16,8 @@ public:
 
     virtual void Use() override;
 
+    virtual void Update(tgFloat DeltaTime);
+
 private:
     bool Collision();
     tgCCollision*   m_pItemcollision;
@@ -24,6 +26,7 @@ private:
     tgCSphere       m_Sphere;
     bool            m_ShouldUpdate;
     tgCV3D          m_Dir;
+    tgFloat         m_Speed;
     tgFloat         m_X;
 };
 

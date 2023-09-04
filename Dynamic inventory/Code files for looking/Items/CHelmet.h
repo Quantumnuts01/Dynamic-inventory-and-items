@@ -6,6 +6,7 @@ class CHelmet :
 public:
     CHelmet(tgSInt32 ItemID, SItemData ItemData);
     ~CHelmet();
-    virtual tgBool UseItem() override;
+    virtual tgBool UseItem(CPlayer* Owner) override;
+    virtual void ItemSelected(CPlayer* Owner) override;
 };
 

@@ -6,6 +6,6 @@ class CDebugCube :
 public:
     CDebugCube(tgSInt32 ItemID, SItemData ItemData);
     ~CDebugCube();
-    virtual tgBool UseItem() override;
+    virtual tgBool UseItem(CPlayer* Owner) override;
 };
 

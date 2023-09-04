@@ -4,6 +4,8 @@
 #include	<imgui.h>
 #include	<vector>
 #include	<map>
+#include	<iostream>
+#include	<cstdlib>
 #include	<tgMemoryEnable.h>
 #include	"../Inventory/CInventorySlot.h"
 #include	<tgCInputListener.h>
@@ -50,6 +52,7 @@ public:
 
 	void								DropItem(tgSInt32 SlotID);
 	void								CreateInventory();
+	void								ClearInventoryItems();
 	void								ClearInventory();
 
 	void								PickupItem();
